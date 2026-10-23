@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rutina">
+<meta name="theme-color" content="#ECE9E1">
+<title>Rutina · Sesión 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ECE9E1;
+    --paper:#FFFFFF;
+    --line:#D8D3C6;
+    --ink:#1C1B17;
+    --muted:#8A8477;
+    --yellow:#E3B505;
+    --yellow-deep:#A57C04;
+    --green:#33553A;
+    --green-pale:#E3ECE1;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+    padding-bottom:calc(40px + env(safe-area-inset-bottom));
+  }
+  .app{
+    max-width:520px;
+    margin:0 auto;
+    padding:calc(20px + env(safe-area-inset-top)) 16px 0 16px;
+  }
+
+  /* header */
+  .app-header{
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    padding-top:calc(4px + env(safe-area-inset-top));
+    padding-bottom:14px;
+    z-index:5;
+  }
+  .header-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+  }
+  .header-top h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:30px;
+    letter-spacing:0.5px;
+    margin:0;
+  }
+  .ghost-btn{
+    background:none;
+    border:1.5px solid var(--line);
+    color:var(--muted);
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    font-size:17px;
+    line-height:1;
+    cursor:pointer;
+  }
+  .ghost-btn:active{ background:var(--line); }
+
+  .week-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:14px;
+  }
+  .week-tabs button{
+    font-family:'Oswald', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.3px;
+    padding:9px 0;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .week-tabs button.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--yellow);
+  }
+
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:14px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    background:var(--line);
+    border-radius:5px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--green);
+    border-radius:5px;
+    transition:width .35s ease;
+  }
+  #progressLabel{
+    font-family:'Oswald', sans-serif;
+    font-size:14px;
+    color:var(--muted);
+    min-width:38px;
+    text-align:right;
+  }
+
+  /* cards */
+  main{ padding:6px 0 24px 0; }
+
+  .card{
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:12px;
+    transition:background .25s ease, border-color .25s ease;
+  }
+  .card.done{
+    background:var(--green-pale);
+    border-color:var(--green);
+  }
+  .card-main{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 14px;
+  }
+  .order{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--bg);
+    border-radius:50%;
+    width:26px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  .card.done .order{ background:var(--green); color:#fff; }
+
+  .card-body{ flex:1; min-width:0; }
+  .ex-name{
+    font-family:'Oswald', sans-serif;
+    font-size:18px;
+    font-weight:500;
+    margin:0 0 4px 0;
+    line-height:1.25;
+  }
+  .ex-metric{ margin-bottom:5px; }
+  .metric-num{
+    font-family:'Oswald', sans-serif;
+    font-size:26px;
+    font-weight:700;
+    color:var(--yellow-deep);
+    transition:transform .15s ease;
+    display:inline-block;
+  }
+  .metric-num.pulse{ transform:scale(1.12); }
+  .metric-suffix{
+    font-family:'Work Sans', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--muted);
+    margin-left:6px;
+  }
+  .ex-note{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:2px 0 0 0;
+    line-height:1.4;
+  }
+
+  .card-actions{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+  }
+  .video-btn{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:var(--bg);
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:14px;
+    border:1.5px solid var(--line);
+  }
+  .video-btn:active{ background:var(--line); }
+
+  .check-btn{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:2px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    position:relative;
+  }
+  .check-btn::after{
+    content:'';
+    position:absolute;
+    top:50%; left:50%;
+    width:12px; height:7px;
+    border-left:2.5px solid transparent;
+    border-bottom:2.5px solid transparent;
+    transform:translate(-50%,-60%) rotate(-45deg);
+  }
+  .card.done .check-btn{ background:var(--green); border-color:var(--green); }
+  .card.done .check-btn::after{ border-color:#fff; }
+
+  /* optional cardio cards */
+  .optional-card{
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:transparent;
+  }
+  .optional-card .opt-left{ display:flex; flex-direction:column; }
+  .optional-card .opt-name{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    font-weight:500;
+  }
+  .optional-card .opt-sub{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:1px;
+  }
+  .optional-card .opt-tag{
+    font-size:11px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:3px 9px;
+    flex-shrink:0;
+  }
+
+  footer{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--muted);
+    padding:10px 0 4px 0;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="header-top">
+      <h1>Sesión 1</h1>
+      <button id="resetBtn" class="ghost-btn" title="Reiniciar sesión">↺</button>
+    </div>
+    <div class="week-tabs" id="weekTabs">
+      <button data-week="0">Sem 1</button>
+      <button data-week="1">Sem 2</button>
+      <button data-week="2">Sem 3</button>
+      <button data-week="3">Sem 4</button>
+    </div>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span id="progressLabel">0/9</span>
+    </div>
+  </header>
+
+  <main id="cardList"></main>
+
+  <footer>Toca el círculo para marcar completado · toca ▶ para ver el video</footer>
+</div>
+
+<script>
+const STORAGE_KEY = 'gym-session1-state';
+
+const warmup = { name:'Cardio progresivo', sub:'Entrada en calor · 5 min' };
+const cooldown = { name:'Cardio suave', sub:'Vuelta a la calma · 5 min' };
+
+const exercises = [
+  { id:'ex1', name:'Rueda abdominal', sets:3, reps:[8,8,10,10],
+    note:'Encorvado en gato enojado y rodillas en colchoneta',
+    video:'https://youtube.com/shorts/knjliGWvGa4?si=MsYwKC__q6xWPcJr' },
+  { id:'ex2', name:'Movilidad de aductores tipo rana', sets:2, reps:[12,12,12,12],
+    note:'Movilidad dinámica',
+    video:'https://youtube.com/shorts/ixHHbN5xbgE?si=NaLMJzVJO4PJrC9b' },
+  { id:'ex3', name:'Saltos laterales en búlgara', sets:'3 por lado', reps:[20,20,30,30],
+    note:'Piernas bien reactivas',
+    video:'https://youtu.be/CSUkXmm1_MU?si=S5TKcXxCNULlXIL1' },
+  { id:'ex4', name:'Sentadilla en multipower con pausa abajo', sets:3, reps:[6,6,6,6],
+    note:'Subo peso cada semana',
+    video:'https://youtube.com/shorts/9hK6721X7s0?si=J4LHuVreio0j4Hb1' },
+  { id:'ex5', name:'Subida al cajón con salto', sets:'2 por lado', reps:[15,15,20,20],
+    note:'Sin descanso',
+    video:'https://youtube.com/shorts/7jJHTwIR2WY?si=iztsPH3DVJkZ0Dsw' },
+  { id:'ex6', name:'Press militar unilateral en landmine', sets:'3 por lado', reps:[10,10,10,10],
+    note:'Encajo la barra en la chapa negra',
+    video:'https://youtu.be/KAUmIt178cw?si=14UNumNW2JLRHzr1' },
+  { id:'ex7', name:'Dominadas isométricas arriba', sets:2, reps:null, specialReps:'Al máximo',
+    note:'Controlo el movimiento arriba',
+    video:'https://youtube.com/shorts/FyHZI9BR2Wk?si=Hi3qxFiGoViLYqer' },
+  { id:'ex8', name:'Press banca en suelo lanzando pelota de peso', sets:3, reps:[10,10,12,12],
+    note:'Pesada',
+    video:'https://youtu.be/61IARJecYrs?si=Tov1YQ0NCFu0k2NB' },
+  { id:'ex9', name:'Vuelo lateral con mancuernas', sets:2, reps:[15,15,15,15],
+    note:'Controlo el movimiento',
+    video:'https://youtube.com/shorts/wPkosHeBUGc?si=YYu1DWxct3jl3YXr' },
+];
+
+let state = { week:0, completed:[] };
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      state.week = parsed.week ?? 0;
+      state.completed = parsed.completed ?? [];
+    }
+  }catch(e){ /* no saved state yet, use defaults */ }
+}
+
+async function saveState(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+  }catch(e){ console.error('No se pudo guardar', e); }
+}
+
+function metricHTML(ex){
+  if(ex.reps === null){
+    return `<span class="metric-num" data-id="${ex.id}">${ex.sets}</span><span class="metric-suffix">series · ${ex.specialReps}</span>`;
+  }
+  const reps = ex.reps[state.week];
+  return `<span class="metric-num" data-id="${ex.id}">${ex.sets} × ${reps}</span>`;
+}
+
+function cardHTML(ex, order){
+  const done = state.completed.includes(ex.id);
+  return `
+  <div class="card ${done ? 'done':''}" data-id="${ex.id}">
+    <div class="card-main">
+      <span class="order">${order}</span>
+      <div class="card-body">
+        <h2 class="ex-name">${ex.name}</h2>
+        <div class="ex-metric">${metricHTML(ex)}</div>
+        <p class="ex-note">${ex.note}</p>
+      </div>
+      <div class="card-actions">
+        <a class="video-btn" href="${ex.video}" target="_blank" rel="noopener">▶</a>
+        <button class="check-btn" aria-label="Marcar completado"></button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function optionalHTML(item){
+  return `
+  <div class="optional-card">
+    <div class="opt-left">
+      <span class="opt-name">${item.name}</span>
+      <span class="opt-sub">${item.sub}</span>
+    </div>
+    <span class="opt-tag">Opcional</span>
+  </div>`;
+}
+
+function renderList(){
+  const list = document.getElementById('cardList');
+  let html = optionalHTML(warmup);
+  exercises.forEach((ex,i)=>{ html += cardHTML(ex, i+1); });
+  html += optionalHTML(cooldown);
+  list.innerHTML = html;
+
+  list.querySelectorAll('.check-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const card = btn.closest('.card');
+      const id = card.getAttribute('data-id');
+      toggleComplete(id, card);
+    });
+  });
+}
+
+function toggleComplete(id, card){
+  const idx = state.completed.indexOf(id);
+  if(idx === -1){ state.completed.push(id); card.classList.add('done'); }
+  else{ state.completed.splice(idx,1); card.classList.remove('done'); }
+  updateProgress();
+  saveState();
+}
+
+function updateProgress(){
+  const total = exercises.length;
+  const done = state.completed.length;
+  document.getElementById('progressFill').style.width = (done/total*100) + '%';
+  document.getElementById('progressLabel').textContent = `${done}/${total}`;
+}
+
+function updateWeekTabs(){
+  document.querySelectorAll('#weekTabs button').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.week) === state.week);
+  });
+}
+
+function refreshMetrics(){
+  exercises.forEach(ex=>{
+    const el = document.querySelector(`.metric-num[data-id="${ex.id}"]`);
+    if(!el || ex.reps === null) return;
+    el.textContent = `${ex.sets} × ${ex.reps[state.week]}`;
+    el.classList.add('pulse');
+    setTimeout(()=> el.classList.remove('pulse'), 160);
+  });
+}
+
+document.getElementById('weekTabs').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  state.week = Number(btn.dataset.week);
+  updateWeekTabs();
+  refreshMetrics();
+  saveState();
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('¿Reiniciar los checks de esta sesión?')){
+    state.completed = [];
+    document.querySelectorAll('.card').forEach(c=>c.classList.remove('done'));
+    updateProgress();
+    saveState();
+  }
+});
+
+(async function init(){
+  await loadState();
+  renderList();
+  updateWeekTabs();
+  updateProgress();
+})();
+</script>
+</body>
+</html>
